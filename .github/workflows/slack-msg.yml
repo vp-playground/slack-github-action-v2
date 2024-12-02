@@ -8,6 +8,8 @@ jobs:
     name: Slack Message
     runs-on: ubuntu-22.04
     steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
       # Cspell:ignore benjlevesque
       - uses: benjlevesque/short-sha@v3.0
         id: short-sha
@@ -22,9 +24,11 @@ jobs:
           webhook-type: webhook-trigger
           payload: |
             text: "🚀 Deploying"
-            fields:
-              - type: "mrkdwn"
-                text: "*${{github.repository}}*\n<${{ github.event.pull_request.html_url || github.event.head_commit.url }}|${{steps.short-sha.outputs.sha}}>"
+            blocks:
+              - type: "section"
+                fields:
+                  - type: "mrkdwn"
+                    text: "*${{github.repository}}*\n<${{ github.event.pull_request.html_url || github.event.head_commit.url }}|${{steps.short-sha.outputs.sha}}>"
 
       - name: Sleep
         run: sleep 10
@@ -41,8 +45,8 @@ jobs:
           webhook-type: webhook-trigger
           payload: |
             thread_ts: "${{ steps.slack-wip.outputs.ts }}"
-            "text": "✅ Deployed\nGitHub Action build result: ${{ job.status }}\n${{github.repository}} ${{steps.short-sha.outputs.sha}}\nvp-playground/slack-github-action-v2"
-            "blocks":
+            text: "✅ Deployed\nGitHub Action build result: ${{ job.status }}\n${{github.repository}} ${{steps.short-sha.outputs.sha}}\nvp-playground/slack-github-action-v2"
+            blocks:
               - type: "section"
                 fields:
                   - type: "mrkdwn"
