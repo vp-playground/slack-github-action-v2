@@ -2,7 +2,7 @@ name: "Build Change Log"
 description: "Build slack message for change log"
 outputs:
   text:
-    value: ${{ steps.replace_newlines.outputs.value }}
+    value: ${{ steps.mrkdwn_changelog.outputs.value }}
     description: "slack message for change log"
 
 runs:
