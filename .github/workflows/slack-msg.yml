@@ -28,6 +28,8 @@ jobs:
               - type: "section"
                 fields:
                   - type: "mrkdwn"
+                    text: "*🚀 Deploying*"
+                  - type: "mrkdwn"
                     text: "*${{github.repository}}*\n<${{ github.event.pull_request.html_url || github.event.head_commit.url }}|${{steps.short-sha.outputs.sha}}>"
 
       - name: Sleep
@@ -44,7 +46,7 @@ jobs:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: webhook-trigger
           payload: |
-            thread_ts: "${{ steps.slack-wip.outputs.ts }}"
+            ts: "${{ steps.slack-wip.outputs.ts }}"
             text: "✅ Deployed\nGitHub Action build result: ${{ job.status }}\n${{github.repository}} ${{steps.short-sha.outputs.sha}}\nvp-playground/slack-github-action-v2"
             blocks:
               - type: "section"
