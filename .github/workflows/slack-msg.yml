@@ -15,13 +15,16 @@ jobs:
           length: 6
 
       - id: slack-wip
-        name: Send deployed notification
+        name: Send WIP notification
         uses: slackapi/slack-github-action@v2.0.0
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: webhook-trigger
           payload: |
-            "text": "GitHub Action build result: ${{ job.status }}\n${{github.repository}} ${{steps.short-sha.outputs.sha}}\n${{ inputs.site }}"
+            text: "🚀 Deploying"
+            fields:
+              - type: "mrkdwn"
+                text: "*${{github.repository}}*\n<${{ github.event.pull_request.html_url || github.event.head_commit.url }}|${{steps.short-sha.outputs.sha}}>"
 
       - name: Sleep
         run: sleep 10
@@ -38,11 +41,11 @@ jobs:
           webhook-type: webhook-trigger
           payload: |
             thread_ts: "${{ steps.slack-wip.outputs.ts }}"
-            "text": "GitHub Action build result: ${{ job.status }}\n${{github.repository}} ${{steps.short-sha.outputs.sha}}\n${{ inputs.site }}"
+            "text": "✅ Deployed\nGitHub Action build result: ${{ job.status }}\n${{github.repository}} ${{steps.short-sha.outputs.sha}}\nvp-playground/slack-github-action-v2"
             "blocks":
               - type: "section"
                 fields:
                   - type: "mrkdwn"
                     text: "*${{github.repository}}*\n<${{ github.event.pull_request.html_url || github.event.head_commit.url }}|${{steps.short-sha.outputs.sha}}>"
                   - type: "mrkdwn"
-                    text: "*Environment*\n<${{ inputs.url }}|${{ inputs.site }}>"
+                    text: "*Environment*\n<https://github.com/vp-playground/slack-github-action-v2|vp-playground/slack-github-action-v2>"
