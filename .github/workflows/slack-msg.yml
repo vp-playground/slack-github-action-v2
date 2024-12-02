@@ -16,25 +16,6 @@ jobs:
         with:
           length: 6
 
-      - id: slack-wip
-        name: Send WIP notification
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: webhook-trigger
-          payload: |
-            text: "🚀 Deploying"
-            blocks:
-              - type: "section"
-                fields:
-                  - type: "mrkdwn"
-                    text: "*🚀 Deploying*"
-                  - type: "mrkdwn"
-                    text: "*${{github.repository}}*\n<${{ github.event.pull_request.html_url || github.event.head_commit.url }}|${{steps.short-sha.outputs.sha}}>"
-
-      - name: Sleep
-        run: sleep 10
-
       - name: Generate CHANGELOG
         id: changelog
         uses: ./.github/actions/generate-changelog
@@ -46,13 +27,18 @@ jobs:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: webhook-trigger
           payload: |
-            channel: ${{ steps.slack-wip.outputs.channel_id }}
-            thread_ts: "${{ steps.slack-wip.outputs.ts }}"
-            text: "✅ Deployed\nGitHub Action build result: ${{ job.status }}\n${{github.repository}} ${{steps.short-sha.outputs.sha}}\nvp-playground/slack-github-action-v2"
             blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*✅ Deployed*"
               - type: "section"
                 fields:
                   - type: "mrkdwn"
-                    text: "*${{github.repository}}*\n<${{ github.event.pull_request.html_url || github.event.head_commit.url }}|${{steps.short-sha.outputs.sha}}>"
+                    text: "*<${{ github.server_url }}/${{ github.repository }}|${{ github.repository }}>*\n<${{ github.event.pull_request.html_url || github.event.head_commit.url }}|${{ steps.short-sha.outputs.sha }}>"
                   - type: "mrkdwn"
                     text: "*Environment*\n<https://github.com/vp-playground/slack-github-action-v2|vp-playground/slack-github-action-v2>"
+              - type: "context"
+                elements:
+                  - type: "mrkdwn"
+                    text: ${{ steps.changelog.outputs.text && toJSON(steps.changelog.outputs.text) || '"_No changes_"'  }}

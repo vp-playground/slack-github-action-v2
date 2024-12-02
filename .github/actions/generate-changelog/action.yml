@@ -17,6 +17,7 @@ runs:
         fromTag: ${{ github.sha }}
         toTag: ${{ github.event.before }}
         writeToFile: false
+        excludeTypes: ""
 
     - name: Convert changelog from markdown to slack
       if: ${{ steps.changelog.outputs.changes }}
